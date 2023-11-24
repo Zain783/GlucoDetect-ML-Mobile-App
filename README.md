@@ -52,7 +52,7 @@ In this template:
 Feel free to add more sections or customize the content based on your project's unique aspects.
 
 Project Images :
-![App Logo]("https://drive.google.com/file/d/1Mqkod3K5EGx2kElmLxs05Ks_u2xIAf4q/view?usp=drive_link")
+![App Logo]("https://github.com/Zain783/glucoma_app_fyp/blob/master/assets/testimage.jpg")
 ![App Logo]("https://drive.google.com/file/d/1Mtw9hIv91OZh7wRF6OqqkUwiWs9euYpM/view?usp=drive_link")
 ![App Logo]("https://drive.google.com/file/d/1Mwr_rKGdkH3LN0K8Vny0uv226ujetVSh/view?usp=drive_link")
 ![App Logo]("https://drive.google.com/file/d/1MxLQXSwL_naOOxcyYo1KR4i_cKlRpmRo/view?usp=drive_link")
