@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "658627546548",
+    "project_id": "glucoma-fyp-new",
+    "storage_bucket": "glucoma-fyp-new.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658627546548:android:73392c9fa2293ade8f76e1",
+        "android_client_info": {
+          "package_name": "com.example.flutter_glucoma"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcOr_METDZ1B1SxuNc5cyjaYOVQvPt2P0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658627546548:android:ac2b9f0b578c623c8f76e1",
+        "android_client_info": {
+          "package_name": "com.example.glucoma_app_fyp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcOr_METDZ1B1SxuNc5cyjaYOVQvPt2P0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
