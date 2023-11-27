@@ -12,6 +12,7 @@ import 'package:glucoma_app_fyp/firebase_options.dart';
 import 'package:glucoma_app_fyp/utils/global_variables.dart';
 import 'package:glucoma_app_fyp/widgets/custom_card.dart';
 import 'features/adminPanel/dashboard_screen.dart';
+import 'features/userPanel/view_doctors_user.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,8 +54,6 @@ class MyApp extends StatelessWidget {
       // No user signed in, navigate to login screen
       return Login();
     } else {
-      // Fetch user data from Firestore
-      // Replace 'yourUsersCollection' with the actual collection name for user data
       return FutureBuilder(
         future:
             FirebaseFirestore.instance.collection('users').doc(user.uid).get(),
@@ -137,18 +136,31 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     borderRadius:
                         BorderRadius.only(bottomRight: Radius.circular(80))),
-                child: const Padding(
+                child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "Hi, Hassan",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      FutureBuilder(
+                        future: _loadUserName(), // Fetch user name here
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator(); // Add loading indicator
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            String userName = snapshot.data.toString();
+                            return Text(
+                              "Hi, $userName",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          }
+                        },
                       ),
                       // You can add a profile image or other elements here
                     ],
@@ -267,7 +279,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: CustomCard(
                       title: "Doctor",
                       icon: Icons.location_history_sharp,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UserViewDoctorsScreen()));
+                      },
                     ),
                   ),
                   Expanded(
@@ -302,5 +319,24 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  Future<String> _loadUserName() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      // Fetch user data from Firestore
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      // Get user display name
+      String displayName = snapshot.data()?['name'] ?? '';
+      return displayName;
+    } else {
+      return '';
+    }
   }
 }

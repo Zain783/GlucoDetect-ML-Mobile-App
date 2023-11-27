@@ -22,7 +22,6 @@ class _DiseaseDetectionAppState extends State<DiseaseDetectionApp> {
   CameraController? _cameraController;
   List<CameraDescription> cameras = [];
 
-
   @override
   void initState() {
     setupCamera();
@@ -48,7 +47,8 @@ class _DiseaseDetectionAppState extends State<DiseaseDetectionApp> {
   }
 
   Future<void> loadModel() async {
-    String modelPath = 'assets/your_model.tflite'; // Replace with the path to your trained model
+    String modelPath =
+        'assets/model.tflite'; // Replace with the path to your trained model
     interpreter = await Interpreter.fromAsset(modelPath);
   }
 
@@ -71,34 +71,34 @@ class _DiseaseDetectionAppState extends State<DiseaseDetectionApp> {
       return;
     }
 
-
     var _imageBytes = _image?.readAsBytesSync();
     if (_imageBytes != null) {
       img.Image? image = img.decodeImage(_imageBytes);
       if (image != null) {
-        image = img.copyResize(image, width: 224, height: 224);
+        // Resize the image to match the expected input shape of the model
+        image = img.copyResize(image, width: 224, height: 448);
       }
     }
 
-
-
-
     // Convert the image to a list of bytes
-  //  List<int> imageBytes = image.getBytes();
+    List<int> imageBytes = _imageBytes?.toList() ?? [];
 
     // Normalize pixel values to the range [0, 1]
-
-    List<double> normalizedImage = _imageBytes?.map((byte) => byte / 255.0)?.toList() ?? [];
-
-    // List<double> normalizedImage = _imageBytes.map((byte) => byte / 255.0).toList();
+    List<double> normalizedImage =
+        imageBytes.map((byte) => byte / 255.0).toList();
 
     // Reshape the image to match the expected input shape of the model
     var inputShape = interpreter!.getInputTensor(0).shape;
-    var outputShape = interpreter!.getOutputTensor(0).shape;
+    var batchSize = inputShape[0];
+    var inputHeight = inputShape[1];
+    var inputWidth = inputShape[2];
+    var inputChannels = inputShape[3];
 
-    // Create input buffer
-    var inputBuffer = Float32List(inputShape.reduce((a, b) => a * b));
+    // Create input buffer with the correct shape
+    var inputBuffer =
+        Float32List(batchSize * inputHeight * inputWidth * inputChannels);
 
+    // Copy normalized image data to the input buffer
     for (var i = 0; i < normalizedImage.length; i++) {
       inputBuffer[i] = normalizedImage[i];
     }
@@ -107,12 +107,11 @@ class _DiseaseDetectionAppState extends State<DiseaseDetectionApp> {
     var outputs = Map<int, dynamic>();
     interpreter!.run(inputBuffer, outputs);
 
-    // Get the model's output
     var output = outputs[0] as List<double>;
 
-    // Update the 'isDiseaseDetected' variable based on the output of the model
     setState(() {
-      isDiseaseDetected = output[0] > 0.1; // Change this based on your model's output threshold
+      isDiseaseDetected =
+          output[0] > 0.1; // Change this based on your model's output threshold
     });
   }
 
@@ -133,8 +132,9 @@ class _DiseaseDetectionAppState extends State<DiseaseDetectionApp> {
                   child: const Text('Capture Image'),
                 ),
                 const SizedBox(height: 20),
-                if (_cameraController != null && _cameraController!.value.isInitialized) ...[
-                  Container(
+                if (_cameraController != null &&
+                    _cameraController!.value.isInitialized) ...[
+                  SizedBox(
                     width: 300,
                     height: 300,
                     child: CameraPreview(_cameraController!),
@@ -153,7 +153,9 @@ class _DiseaseDetectionAppState extends State<DiseaseDetectionApp> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    isDiseaseDetected ? 'Disease Detected' : 'No Disease Detected',
+                    isDiseaseDetected
+                        ? 'Disease Detected'
+                        : 'No Disease Detected',
                     style: const TextStyle(fontSize: 20),
                   ),
                 ],
