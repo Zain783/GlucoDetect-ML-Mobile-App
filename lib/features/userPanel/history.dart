@@ -14,7 +14,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   void initState() {
     super.initState();
     _historyStream = FirebaseFirestore.instance
-        .collection('user_history')
+        .collection('detection_history')
         .where('userId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
         .snapshots();
   }
@@ -22,7 +22,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Future<void> _deleteHistoryItem(String documentId) async {
     try {
       await FirebaseFirestore.instance
-          .collection('user_history')
+          .collection('detection_history')
           .doc(documentId)
           .delete();
     } catch (e) {
@@ -36,7 +36,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Confirm Delete"),
-          content: const Text("Are you sure you want to delete this history item?"),
+          content:
+              const Text("Are you sure you want to delete this history item?"),
           actions: <Widget>[
             TextButton(
               child: const Text("Cancel"),
@@ -78,22 +79,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
               var historyItem = snapshot.data!.docs[index];
-              var imageUrl = historyItem['imageUrl'] ?? '';
+              var imageUrl = historyItem['image_url'] ?? '';
+              final prediction = historyItem['prediction'] ?? "";
 
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 6),
                 child: Column(
                   children: [
-                    imageUrl.isNotEmpty
-                        ? Image.network(
-                            imageUrl,
-                            height: 100,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          )
-                        : Container(), // Display an empty container if imageUrl is empty
                     ListTile(
-                      title: Text('History Item #$index'),
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(imageUrl),
+                        radius: 26,
+                      ),
+                      title: Text(
+                        'Prediction: ${prediction == "" ? "NAN" : prediction}',
+                        style: const TextStyle(fontSize: 11),
+                      ),
                       trailing: IconButton(
                         icon: const Icon(Icons.delete),
                         onPressed: () {
