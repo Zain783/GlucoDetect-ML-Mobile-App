@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:glucoma_app_fyp/forget_password.dart';
 import 'package:glucoma_app_fyp/main.dart';
 import 'package:glucoma_app_fyp/signup_screen.dart';
 import 'package:glucoma_app_fyp/utils/global_variables.dart';
@@ -236,10 +237,18 @@ class _LoginState extends State<Login> {
                     ),
 
                     10.h,
-                    Container(
-                      child: const Text(
-                        "Forgotten Password?",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ForgetPassword()));
+                      },
+                      child: Container(
+                        child: const Text(
+                          "Forgotten Password?",
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
                       ),
                     ),
 

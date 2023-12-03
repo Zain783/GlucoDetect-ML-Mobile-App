@@ -22,10 +22,8 @@ class AuthMethods {
         password: password,
       );
       User? user = result.user;
-      await _firestore
-          .collection('users')
-          .doc(user?.uid)
-          .set({'email': email, 'name': name, 'role': "user"});
+      await _firestore.collection('users').doc(user?.uid).set(
+          {'email': email, 'name': name, 'role': "user", 'userId': user!.uid});
 
       // ignore: use_build_context_synchronously
       Utils.snackBar("Account created successfully", context);
@@ -82,6 +80,16 @@ class AuthMethods {
     } catch (e) {
       Utils.snackBar(e.toString(), context);
       print("Error in signInWithEmailAndPassword: $e");
+    }
+  }
+
+  Future<void> resetPassword(String email, BuildContext context) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      Utils.snackBar("Password reset email sent. Check your inbox.", context);
+    } catch (e) {
+      Utils.snackBar("Error sending password reset email: $e", context);
+      print("Error in resetPassword: $e");
     }
   }
 

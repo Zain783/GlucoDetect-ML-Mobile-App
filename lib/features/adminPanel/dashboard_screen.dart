@@ -176,37 +176,6 @@ class DashboardScreen extends StatelessWidget {
                     child: Card(
                       elevation: 5,
                       child: InkWell(
-                        onTap: () {},
-                        child: const Padding(
-                          padding: EdgeInsets.all(6.0),
-                          child: Column(
-                            children: [
-                              const Icon(Icons.bar_chart,
-                                  size: 40, color: Colors.blue),
-                              Text(
-                                "Statistics",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue),
-                              ),
-                              Text(
-                                "View and analyze statistics",
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                10.w,
-                Expanded(
-                  child: SizedBox(
-                    height: 160,
-                    child: Card(
-                      elevation: 5,
-                      child: InkWell(
                         onTap: () {
                           Navigator.push(
                             context,
@@ -280,8 +249,7 @@ class DashboardScreen extends StatelessWidget {
                   // Handle settings option
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => MedicinesScreen()),
+                    MaterialPageRoute(builder: (context) => MedicinesScreen()),
                   );
                 },
               ),

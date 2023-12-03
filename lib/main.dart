@@ -6,7 +6,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:glucoma_app_fyp/Login.dart';
 import 'package:glucoma_app_fyp/features/userPanel/Medicine.dart';
 import 'package:glucoma_app_fyp/features/userPanel/Settings.dart';
+import 'package:glucoma_app_fyp/features/userPanel/detect_Glucoma.dart';
 import 'package:glucoma_app_fyp/features/userPanel/detetction.dart';
+import 'package:glucoma_app_fyp/features/userPanel/history.dart';
 import 'package:glucoma_app_fyp/features/userPanel/image.dart';
 import 'package:glucoma_app_fyp/firebase_options.dart';
 import 'package:glucoma_app_fyp/utils/global_variables.dart';
@@ -137,16 +139,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     borderRadius:
                         BorderRadius.only(bottomRight: Radius.circular(80))),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       FutureBuilder(
-                        future: _loadUserName(), // Fetch user name here
+                        future: _loadUserName(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator(); // Add loading indicator
+                            return const CircularProgressIndicator();
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else {
@@ -162,7 +164,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           }
                         },
                       ),
-                      // You can add a profile image or other elements here
                     ],
                   ),
                 ),
@@ -237,10 +238,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               15.h,
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomCard(
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    CustomCard(
                       title: "Camera",
                       icon: Icons.linked_camera,
                       onTap: () {
@@ -251,32 +253,28 @@ class _MyHomePageState extends State<MyHomePage> {
                         );
                       },
                     ),
-                  ),
-                  Expanded(
-                      child: CustomCard(
-                    title: "Gallery",
-                    icon: Icons.photo_library,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => DiseaseApp()),
-                      );
-                    },
-                  )),
-                  Expanded(
-                    child: CustomCard(
+                    CustomCard(
+                      title: "Gallery",
+                      icon: Icons.photo_library,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DiseaseFormGalleryApp()),
+                        );
+                      },
+                    ),
+                    CustomCard(
                       title: "History",
                       icon: Icons.history,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HistoryScreen()));
+                      },
                     ),
-                  )
-                ],
-              ),
-              10.h,
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomCard(
+                    CustomCard(
                       title: "Doctor",
                       icon: Icons.location_history_sharp,
                       onTap: () {
@@ -286,30 +284,39 @@ class _MyHomePageState extends State<MyHomePage> {
                                 builder: (context) => UserViewDoctorsScreen()));
                       },
                     ),
+                  ],
+                ),
+              ),
+              10.h,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  CustomCard(
+                    title: "Medicine",
+                    icon: Icons.medical_services,
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Medicine()));
+                    },
                   ),
-                  Expanded(
-                    child: CustomCard(
-                      title: "Medicine",
-                      icon: Icons.medical_services,
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Medicine()));
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: CustomCard(
-                      title: "Settings",
-                      icon: Icons.settings,
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SettingsScreen()));
-                      },
-                    ),
+                  CustomCard(
+                    title: "Settings",
+                    icon: Icons.settings,
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SettingsScreen()));
+                    },
+                  ),CustomCard(
+                    title: "Detect",
+                    icon: Icons.remove_red_eye_outlined,
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DetectGlucoma()));
+                    },
                   )
                 ],
               ),

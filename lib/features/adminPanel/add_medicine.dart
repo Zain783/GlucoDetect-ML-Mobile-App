@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:glucoma_app_fyp/features/adminPanel/services/admin_services.dart';
+import 'package:glucoma_app_fyp/repository/admin_services.dart';
 import 'package:glucoma_app_fyp/utils/global_variables.dart';
 import 'package:image_picker/image_picker.dart';
 

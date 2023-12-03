@@ -16,7 +16,7 @@ class CustomCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(left: 5),
-      width: 90,
+      width: 95,
       height: 110,
       child: Card(
         elevation: 5,

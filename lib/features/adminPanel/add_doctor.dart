@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:glucoma_app_fyp/features/adminPanel/services/admin_services.dart';
+import 'package:glucoma_app_fyp/repository/admin_services.dart';
+import 'package:glucoma_app_fyp/utils/app_size.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddDoctorScreen extends StatefulWidget {
@@ -12,6 +13,7 @@ class AddDoctorScreen extends StatefulWidget {
 
 class _AddDoctorScreenState extends State<AddDoctorScreen> {
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
   final TextEditingController _contactController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -162,6 +164,26 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
                     return null;
                   },
                 ),
+                12.h,
+                TextFormField(
+                  controller: _cityController,
+                  decoration: InputDecoration(
+                    labelText: 'City',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(11),
+                    ),
+                    prefixIcon: const Icon(
+                      Icons.location_city,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the doctor City';
+                    }
+                    return null;
+                  },
+                ),
                 const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: () async {
@@ -175,6 +197,7 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
                           contact: _contactController.text,
                           description: _descriptionController.text,
                           email: _emailController.text,
+                          city: _cityController.text,
                           image: _image!,
                           context: context,
                         );

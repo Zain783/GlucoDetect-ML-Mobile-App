@@ -19,53 +19,54 @@ class Medicine extends StatelessWidget {
 
           List<DocumentSnapshot> medicines = snapshot.data!.docs;
 
-          return Center(
-            child: ListWheelScrollView(
-              itemExtent: 300,
-              children: medicines.map((DocumentSnapshot document) {
-                var medicine = document.data() as Map<String, dynamic>;
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Display the medicine name
-                          Image.network(
-                            medicine['image_url'] ?? 'No Name',
-                            height: 100,
-                          ),
-                          Text(
-                            medicine['name'] ?? 'No Name',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          // Display the medicine description
-                          Text(
-                            medicine['description'] ?? 'No Description',
-                            style: const TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                          // You can add more details if needed, e.g., image
-                        ],
-                      ),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(21),
-                    ),
-                    width: double.infinity,
+          return ListView.builder(
+            itemCount: medicines.length,
+            itemBuilder: (context, index) {
+              var medicine = medicines[index].data() as Map<String, dynamic>;
+
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                );
-              }).toList(),
-            ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Display the medicine name
+                        Image.network(
+                          medicine['image_url'] ?? 'No Image',
+                          height: 100,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          medicine['name'] ?? 'No Name',
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        // Display the medicine description
+                        Text(
+                          medicine['description'] ?? 'No Description',
+                          style: const TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                        // You can add more details if needed
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
           );
         },
       ),
