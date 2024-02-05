@@ -308,15 +308,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           MaterialPageRoute(
                               builder: (context) => SettingsScreen()));
                     },
-                  ),CustomCard(
-                    title: "Detect",
-                    icon: Icons.remove_red_eye_outlined,
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DetectGlucoma()));
-                    },
                   )
                 ],
               ),

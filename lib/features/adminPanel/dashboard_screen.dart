@@ -8,6 +8,8 @@ import 'package:glucoma_app_fyp/features/adminPanel/view_doctors.dart';
 import 'package:glucoma_app_fyp/features/adminPanel/view_medicines.dart';
 import 'package:glucoma_app_fyp/utils/global_variables.dart';
 
+import '../../repository/auth_methords.dart';
+
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key? key}) : super(key: key);
 
@@ -53,10 +55,8 @@ class DashboardScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Logout'),
-              onTap: () {
-                FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (context) => Login()));
+              onTap: () async {
+                await AuthMethods().signOut(context);
               },
             ),
           ],

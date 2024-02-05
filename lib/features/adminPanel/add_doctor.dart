@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:glucoma_app_fyp/repository/admin_services.dart';
 import 'package:glucoma_app_fyp/utils/app_size.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geocoding/geocoding.dart';
+import '../../repository/admin_services.dart';
 
 class AddDoctorScreen extends StatefulWidget {
   const AddDoctorScreen({Key? key}) : super(key: key);
@@ -10,7 +13,6 @@ class AddDoctorScreen extends StatefulWidget {
   @override
   _AddDoctorScreenState createState() => _AddDoctorScreenState();
 }
-
 class _AddDoctorScreenState extends State<AddDoctorScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
@@ -29,6 +31,35 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
         _image = File(pickedFile.path);
       });
     }
+  }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    return await Geolocator.getCurrentPosition();
   }
 
   bool isLoading = false;
@@ -165,28 +196,53 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
                   },
                 ),
                 12.h,
-                TextFormField(
-                  controller: _cityController,
-                  decoration: InputDecoration(
-                    labelText: 'City',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(11),
-                    ),
-                    prefixIcon: const Icon(
-                      Icons.location_city,
+                Container(
+                  height: 56,
+                  margin: const EdgeInsets.symmetric(vertical: 16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(11),
+                    border: Border.all(
                       color: Colors.blue,
+                      width: 2,
                     ),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter the doctor City';
-                    }
-                    return null;
-                  },
+                  child: TextButton(
+                    onPressed: () async {
+                      final Position position = await _determinePosition();
+                      Selectedlatitude = position.longitude;
+                      Selectedlongitude = position.latitude;
+                      await updateSelectedLocationText();
+                      // ignore: use_build_context_synchronously
+                      showMapDialog(
+                          context, position.latitude, position.longitude);
+                    },
+                    child: Row(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.add_location,
+                            color: Colors.blue,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            selectedLocationText,
+                            style: const TextStyle(
+                              color: Colors.blue,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: () async {
+                    setState(() {});
                     if (_formKey.currentState!.validate()) {
                       setState(() {
                         isLoading = true;
@@ -197,14 +253,14 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
                           contact: _contactController.text,
                           description: _descriptionController.text,
                           email: _emailController.text,
-                          city: _cityController.text,
-                          image: _image!,
                           context: context,
+                          image: _image!,
+                          latitude: Selectedlatitude,
+                          longitude: Selectedlongitude,
                         );
                       } catch (e) {
                         print(e.toString());
                       }
-
                       setState(() {
                         isLoading = false;
                       });
@@ -220,6 +276,32 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
         ),
       ),
     );
+  }
+
+  String selectedLocationText = "Select Location";
+  Future<void> updateSelectedLocationText() async {
+    try {
+      final List<Placemark> placemarks = await placemarkFromCoordinates(
+        Selectedlatitude,
+        Selectedlongitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        final Placemark placemark = placemarks.first;
+        setState(() {
+          selectedLocationText = placemark.name ?? 'Location Selected';
+        });
+      } else {
+        setState(() {
+          selectedLocationText = 'Location Selected';
+        });
+      }
+    } catch (e) {
+      print('Error fetching location: $e');
+      setState(() {
+        selectedLocationText = 'Location Selected';
+      });
+    }
   }
 
   Future<void> _showImageSourceDialog() async {
@@ -253,4 +335,117 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
       },
     );
   }
+
+  void showMapDialog(BuildContext context, double latitude, double longitude) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return MapDialog(latitude, longitude);
+      },
+    );
+  }
+}
+
+double Selectedlatitude = 32.4672515;
+double Selectedlongitude = 74.533288;
+
+class MapDialog extends StatefulWidget {
+  final double latitude;
+  final double longitude;
+
+  MapDialog(this.latitude, this.longitude, {Key? key}) : super(key: key);
+
+  @override
+  _MapDialogState createState() => _MapDialogState();
+}
+
+class _MapDialogState extends State<MapDialog> {
+  GoogleMapController? mapController;
+  LatLng? selectedLocation;
+
+  final searchBar = const SearchBar(
+    hintText: 'Search Location',
+  );
+
+  static PreferredSizeWidget buildAppBar(BuildContext context) {
+    return AppBar(
+      title: Text('Search Location'),
+    );
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    setState(() {
+      mapController = controller;
+    });
+  }
+
+  void _onMapTap(LatLng tappedPoint) {
+    setState(() {
+      selectedLocation = tappedPoint;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      contentPadding: EdgeInsets.zero,
+      content: Column(
+        children: [
+          searchBar,
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 85.0),
+              child: GoogleMap(
+                onMapCreated: _onMapCreated,
+                onTap: _onMapTap,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(widget.latitude, widget.longitude),
+                  zoom: 11.0,
+                ),
+                markers: selectedLocation != null
+                    ? {
+                        Marker(
+                          markerId: const MarkerId('selected'),
+                          position: selectedLocation!,
+                        )
+                      }
+                    : {},
+              ),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        ElevatedButton(
+          onPressed: () {
+            Selectedlatitude = selectedLocation!.latitude;
+            Selectedlongitude = selectedLocation!.longitude;
+            Navigator.pop(context);
+          },
+          child: const Text('Select Location'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.of(context)
+                .pop(); // Close the dialog without selecting a location
+          },
+          child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+}
+void showMapDialog(
+    BuildContext context, double longitude, double currentLatidude) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return MapDialog(longitude, currentLatidude);
+    },
+  ).then((selectedLocation) {
+    if (selectedLocation != null) {
+      // Handle the selected location here
+      print('Selected Location: $selectedLocation');
+    }
+  });
 }

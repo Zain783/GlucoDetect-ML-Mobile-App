@@ -12,7 +12,8 @@ class AdminServices {
       required String contact,
       required String description,
       required String email,
-      required String city,
+      required double latitude,
+      required double longitude,
       required File image,
       required BuildContext context}) async {
     try {
@@ -37,7 +38,8 @@ class AdminServices {
         'contact': contact,
         'description': description,
         'email': email,
-        'city': city,
+        'longitude': longitude,
+        'latitude': latitude,
         'image_url': imageUrl,
         'added_by': user?.uid,
       });

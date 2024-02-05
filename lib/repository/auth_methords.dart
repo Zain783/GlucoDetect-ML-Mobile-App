@@ -96,8 +96,6 @@ class AuthMethods {
   // Method to log out the user
   Future<void> signOut(BuildContext context) async {
     try {
-      final FirebaseAuth _auth = FirebaseAuth.instance;
-
       await _auth.signOut();
 
       Navigator.pushReplacement(
