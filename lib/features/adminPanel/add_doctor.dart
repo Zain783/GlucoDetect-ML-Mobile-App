@@ -211,7 +211,7 @@ class _AddDoctorScreenState extends State<AddDoctorScreen> {
                       final Position position = await _determinePosition();
                       Selectedlatitude = position.longitude;
                       Selectedlongitude = position.latitude;
-                      await updateSelectedLocationText();
+                      // await updateSelectedLocationText();
                       // ignore: use_build_context_synchronously
                       showMapDialog(
                           context, position.latitude, position.longitude);

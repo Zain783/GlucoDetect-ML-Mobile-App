@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:glucoma_app_fyp/repository/auth_methords.dart';
 
+import '../../Login.dart';
+
 class SettingsScreen extends StatefulWidget {
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -125,8 +127,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           setState(() {
                             islogout = true;
                           });
-
                           await AuthMethods().signOut(context);
+
                           setState(() {
                             islogout = false;
                           });

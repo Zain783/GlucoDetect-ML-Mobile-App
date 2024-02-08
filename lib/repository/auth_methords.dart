@@ -97,9 +97,13 @@ class AuthMethods {
   Future<void> signOut(BuildContext context) async {
     try {
       await _auth.signOut();
+      Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => Login()),
+      (route) => false, // Prevents user from going back to dashboard
+    );
 
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Login()));
+     
     } catch (e) {
       print("Error in signOut: $e");
     }
