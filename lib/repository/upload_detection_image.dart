@@ -42,8 +42,7 @@ Future<void> uploadDetectionImage(
 }
 
 Future<void> preditionApi(String imageUrl, BuildContext context) async {
-  String urladdress = "http://127.0.0.1:8000/predict";
-  //final response = await http.get(Uri.parse("http://10.0.2.2:8000"));
+  String urladdress = "https://eyemodel-cb6a576fc257.herokuapp.com/predict";
   try {
     final response = await http.post(
       Uri.parse(urladdress),
@@ -52,7 +51,7 @@ Future<void> preditionApi(String imageUrl, BuildContext context) async {
         "Accept": "*/*",
         "Connection": "keep-alive"
       },
-      body: jsonEncode({"image": imageUrl}),
+      body: jsonEncode({"image_path": imageUrl}),
     );
     if (response.statusCode == 200) {
       // ignore: use_build_context_synchronously

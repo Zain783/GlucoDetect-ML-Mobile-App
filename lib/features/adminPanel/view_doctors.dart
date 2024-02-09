@@ -11,13 +11,13 @@ class _DoctorsProfileScreenState extends State<DoctorsProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Doctors Profile'),
+        title: const Text('Doctors Profile'),
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('doctors').snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -31,9 +31,9 @@ class _DoctorsProfileScreenState extends State<DoctorsProfileScreen> {
 
               return Card(
                 elevation: 3,
-                margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ListTile(
-                  contentPadding: EdgeInsets.all(16),
+                  contentPadding: const EdgeInsets.all(16),
                   leading: CircleAvatar(
                     // You can use the doctor's profile image here if available
                     radius: 30,
